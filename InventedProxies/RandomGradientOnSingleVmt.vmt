@@ -1,0 +1,150 @@
+$framemax 3 // 设置为basetexture的最大帧编号
+$detailframemax 2 // 设置为detail的最大帧编号
+// ========================================================
+$min 0
+$max 3.99
+$noise 0.0
+$period 4
+$sinemin -1.5
+$sinemax 2.5
+$sineoffset 0
+$sine 0.0
+$detailblendfactor 0.0
+$factormin 0
+$factormax 1
+$zero 0.0
+$one 1.0
+$cap 2.4999
+$switch 0.0
+$frameDelta 0.0
+$intframeDelta 0.0
+$frame 0.0
+$framecorr 0.0
+$framecorrnum 0.0
+$detailcap -1.4999
+$detailswitch 0.0
+$detailframeDelta 0.0
+$intdetailframeDelta 0.0
+$detailframe 0.0
+$detailframecorr 0.0
+$detailframecorrnum 0.0
+
+Proxies
+{
+	UniformNoise
+	{
+		minVal	"$min"
+		maxVal	"$max"
+		resultVar	"$noise"
+	}
+	Sine
+	{
+		sineperiod	"$period"
+		sinemin	"$sinemin"
+		sinemax	"$sinemax"
+		timeoffset	"$sineoffset"
+		resultVar	"$sine"
+	}
+	Equals
+	{
+		srcVar1	"$sine"
+		resultVar	"$detailblendfactor"
+	}
+	Clamp
+	{
+		min	"$factormin"
+		max	"$factormax"
+		srcVar1	"$detailblendfactor"
+		resultVar	"$detailblendfactor"
+	}
+	LessOrEqual
+	{
+		lessEqualVar	"$zero"
+		greaterVar	"$one"
+		srcVar1	"$sine"
+		srcVar2	"$cap"
+		resultVar	"$switch"
+	}
+	Multiply
+	{
+		srcVar1	"$switch"
+		srcVar2	"$noise"
+		resultVar	"$frameDelta"
+	}
+	Int
+	{
+		srcVar1	"$frameDelta"
+		resultVar	"$intframeDelta"
+	}
+	Add
+	{
+		srcVar1	"$intframeDelta"
+		srcVar2	"$frame"
+		resultVar	"$frame"
+	}
+	LessOrEqual
+	{
+		lessEqualVar	"$zero"
+		greaterVar	"$one"
+		srcVar1	"$frame"
+		srcVar2	"$framemax"
+		resultVar	"$framecorr"
+	}
+	Multiply
+	{
+		srcVar1	"$framemax"
+		srcVar2	"$framecorr"
+		resultVar	"$framecorrnum"
+	}
+	Subtract
+	{
+		srcVar1	"$frame"
+		srcVar2	"$framecorrnum"
+		resultVar	"$frame"
+	}
+	LessOrEqual
+	{
+		lessEqualVar	"$one"
+		greaterVar	"$zero"
+		srcVar1	"$sine"
+		srcVar2	"$detailcap"
+		resultVar	"$detailswitch"
+	}
+	Multiply
+	{
+		srcVar1	"$detailswitch"
+		srcVar2	"$noise"
+		resultVar	"$detailframeDelta"
+	}
+	Int
+	{
+		srcVar1	"$detailframeDelta"
+		resultVar	"$intdetailframeDelta"
+	}
+	Add
+	{
+		srcVar1	"$intdetailframeDelta"
+		srcVar2	"$detailframe"
+		resultVar	"$detailframe"
+	}
+	LessOrEqual
+	{
+		lessEqualVar	"$zero"
+		greaterVar	"$one"
+		srcVar1	"$detailframe"
+		srcVar2	"$detailframemax"
+		resultVar	"$detailframecorr"
+	}
+	Multiply
+	{
+		srcVar1	"$detailframemax"
+		srcVar2	"$detailframecorr"
+		resultVar	"$detailframecorrnum"
+	}
+	Subtract
+	{
+		srcVar1	"$detailframe"
+		srcVar2	"$detailframecorrnum"
+		resultVar	"$detailframe"
+	}
+}
