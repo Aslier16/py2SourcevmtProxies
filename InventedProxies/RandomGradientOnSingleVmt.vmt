@@ -1,3 +1,4 @@
+// 使用detail的单vmt随机渐变
 $framemax 3 // 设置为basetexture的最大帧编号
 $detailframemax 2 // 设置为detail的最大帧编号
 // ========================================================
