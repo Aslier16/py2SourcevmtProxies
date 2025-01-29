@@ -4,3 +4,5 @@
 !template.py
 !InventedProxies/
 !InventedProxies/**
+!py/
+!py/**
