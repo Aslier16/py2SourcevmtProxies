@@ -1,5 +1,4 @@
-RNG/
-timer.py
-reverseTestExample.txt
-Proxies.txt
-ReversedProxies.py
+*
+!Pyroxies.py
+!ProxiesArchive.py
+!template.py
