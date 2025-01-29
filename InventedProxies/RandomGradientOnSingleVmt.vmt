@@ -1,9 +1,9 @@
 // 使用detail的单vmt随机渐变
 $framemax 3 // 设置为basetexture的最大帧编号
 $detailframemax 2 // 设置为detail的最大帧编号
+$max 1.99 每次可递增的最大数，最好不要超过总帧数的一半，否则可能随机到现有的帧
 // ========================================================
 $min 0
-$max 3.99
 $noise 0.0
 $period 4
 $sinemin -1.5
