@@ -15,14 +15,14 @@ $factormin 0
 $factormax 1
 $zero 0.0
 $one 1.0
-$cap 2.4999
+$cap 2.49
 $switch 0.0
 $frameDelta 0.0
 $intframeDelta 0.0
 $frame 0.0
 $framecorr 0.0
 $framecorrnum 0.0
-$detailcap -1.4999
+$detailcap -1.49
 $detailswitch 0.0
 $detailframeDelta 0.0
 $intdetailframeDelta 0.0
