@@ -1,0 +1,164 @@
+// 选择性改动以下内容
+$period 4 // 变化周期控制
+$sinemin -2 // 最值改变渐变速度，注意事项见cap
+$sinemax 3
+$offset 0 // 相位，一般无须改动
+
+$framemax 9 // basetexture最大帧数的 编号
+$framemaxplusone 10 // basetexture最大帧数的 编号+1
+$cap 2.5 // 只要该值>1且<sinemax理论上无需改动
+$captwo 0.5 // 只要该值<1理论上无需改动
+
+$detailframemax 9 // detail最大帧数的 编号
+$detailframemaxplusone 10 // detail最大帧数的 编号+1
+$detailcap -1.5 // 只要该值<0且>sinemin理论上无需改动
+$detailcaptwo 0.5 // 只要该值<1理论上无需改动
+// 以下不要改动，除非你知道自己在做什么
+$frame 0.0
+$detailframe 0.0
+$sine 0.0
+$detailblendfactor 0.0
+$zero 0
+$one 1
+$flag 0.0
+$flagtwo 0.0
+$delta 0.0
+$corr 0.0
+$corrnum 0.0
+$detailflag 0.0
+$detailflagtwo 0.0
+$detaildelta 0.0
+$detailcorr 0.0
+$detailcorrnum 0.0
+
+Proxies
+{
+	Sine
+	{
+		sineperiod	"$period"
+		sinemin	"$sinemin"
+		sinemax	"$sinemax"
+		timeoffset	"$offset"
+		resultVar	"$sine"
+	}
+	Equals
+	{
+		srcVar1	"$sine"
+		resultVar	"$detailblendfactor"
+	}
+	Clamp
+	{
+		min	"$zero"
+		max	"$one"
+		srcVar1	"$detailblendfactor"
+		resultVar	"$detailblendfactor"
+	}
+	LessOrEqual
+	{
+		lessEqualVar	"$zero"
+		greaterVar	"$one"
+		srcVar1	"$sine"
+		srcVar2	"$cap"
+		resultVar	"$flag"
+	}
+	LessOrEqual
+	{
+		lessEqualVar	"$one"
+		greaterVar	"$flagtwo"
+		srcVar1	"$sine"
+		srcVar2	"$captwo"
+		resultVar	"$flagtwo"
+	}
+	Multiply
+	{
+		srcVar1	"$flagtwo"
+		srcVar2	"$flag"
+		resultVar	"$delta"
+	}
+	Subtract
+	{
+		srcVar1	"$flagtwo"
+		srcVar2	"$delta"
+		resultVar	"$flagtwo"
+	}
+	Add
+	{
+		srcVar1	"$delta"
+		srcVar2	"$frame"
+		resultVar	"$frame"
+	}
+	LessOrEqual
+	{
+		lessEqualVar	"$zero"
+		greaterVar	"$one"
+		srcVar1	"$frame"
+		srcVar2	"$framemax"
+		resultVar	"$corr"
+	}
+	Multiply
+	{
+		srcVar1	"$corr"
+		srcVar2	"$framemaxplusone"
+		resultVar	"$corrnum"
+	}
+	Subtract
+	{
+		srcVar1	"$frame"
+		srcVar2	"$corrnum"
+		resultVar	"$frame"
+	}
+	LessOrEqual
+	{
+		lessEqualVar	"$one"
+		greaterVar	"$zero"
+		srcVar1	"$sine"
+		srcVar2	"$detailcap"
+		resultVar	"$detailflag"
+	}
+	LessOrEqual
+	{
+		lessEqualVar	"$detailflagtwo"
+		greaterVar	"$one"
+		srcVar1	"$sine"
+		srcVar2	"$detailcaptwo"
+		resultVar	"$detailflagtwo"
+	}
+	Multiply
+	{
+		srcVar1	"$detailflagtwo"
+		srcVar2	"$detailflag"
+		resultVar	"$detaildelta"
+	}
+	Subtract
+	{
+		srcVar1	"$detailflagtwo"
+		srcVar2	"$detaildelta"
+		resultVar	"$detailflagtwo"
+	}
+	Add
+	{
+		srcVar1	"$detaildelta"
+		srcVar2	"$detailframe"
+		resultVar	"$detailframe"
+	}
+	LessOrEqual
+	{
+		lessEqualVar	"$zero"
+		greaterVar	"$one"
+		srcVar1	"$detailframe"
+		srcVar2	"$detailframemax"
+		resultVar	"$detailcorr"
+	}
+	Multiply
+	{
+		srcVar1	"$detailcorr"
+		srcVar2	"$detailframemaxplusone"
+		resultVar	"$detailcorrnum"
+	}
+	Subtract
+	{
+		srcVar1	"$detailframe"
+		srcVar2	"$detailcorrnum"
+		resultVar	"$detailframe"
+	}
+}
