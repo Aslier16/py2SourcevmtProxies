@@ -1,4 +1,4 @@
-from Pyroxies import Proxies
+from Py2Proxies.Pyroxies import Proxies
 import time
 
 myProxies = Proxies()
@@ -19,4 +19,4 @@ if __name__ == "__main__":
         # print("xxx: ", myProxies.calculatedVariables["变量名"])
 
     # 引号内填入输出到的txt路径，如"Proxies.txt"，不填则默认输出到当前路径下的Proxies.txt
-    myProxies.build("Proxies.txt")
+    myProxies.build(f"{__file__}.txt")

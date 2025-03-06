@@ -724,9 +724,10 @@ class Proxies:
             convar (str): 目标控制台变量
             resultVar (str): 存储该控制台变量值的变量
         """
-        convar = self.initVariables(convar)
+        # convar = self.initVariables(convar)
+        resultVar = self.initVariables(resultVar)
         if self.firstTime:
-            self.content += f'\tConVar\n\t{{\n\t\tconvar\t"${convar}"\n\t\tresultVar\t"${resultVar}"\n\t}}\n'
+            self.content += f'\tConVar\n\t{{\n\t\tconvar\t"{convar}"\n\t\tresultVar\t"${resultVar}"\n\t}}\n'
 
     # 生成结果
     def build(self, path: str = "./Proxies.txt"):

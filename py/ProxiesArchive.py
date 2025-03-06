@@ -1,4 +1,4 @@
-from Pyroxies import Proxies
+from Py2Proxies.Pyroxies import Proxies
 myProxies = Proxies()
 # LinearRamp锯齿波循环
 myProxies.LinearRamp(["rate", 1.0], "initialVal", "ramp")
@@ -38,3 +38,15 @@ myProxies.Add("delta", "frame","frame")
 myProxies.LessOrEqual(["zero", 0],["one", 1], "frame", ["framemax", 9], "corr")
 myProxies.Multiply("corr", ["framemaxplusone", 10], "corrnum")
 myProxies.Subtract("frame", "corrnum", "frame")
+
+#取模
+myProxies.Divide("input",["inputtwo", 10],"modtmp")
+myProxies.Int("modtmp","modtmp")
+myProxies.Multiply("modtmp","inputtwo","modtmp")
+myProxies.Subtract("LCGtmp","modtmp","output")
+
+# 使用基础运算函数代替LessOrEqual判断并赋值flag的功能
+myProxies.Subtract("ramp",["rampmax", 9.99], "judgeFactorone")
+myProxies.Abs("judgeFactorone","judgeFactortwo")
+myProxies.Divide("judgeFactorone","judgeFactortwo","flag")
+myProxies.Clamp(["zero",0.0],["one",1.0],"flag","flag")

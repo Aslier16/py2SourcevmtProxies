@@ -1,0 +1,205 @@
+
+$detailblendmode 2
+$sine_period 10
+$sine_min -1.5
+$sine_max 2.5
+$sine_offset 0
+$ER_scale 2147483647
+$detailscale 1
+$detailblendfactor 0.0
+$ER_output 0.0
+$onewayFlag1 1
+$seed 0.0
+$current 0.0
+$zero 0
+$LCG_a 48271
+$LCG_c 1013904223
+$LCG_m 2147483647
+$mod_temp1 0.0
+$unit 0.0
+$frameLen 10
+$rand 0.0
+$sine 0.0
+$one 1
+$base_cap 1.25
+$baseFlag 0.0
+$pre_baseFlag 0.0
+$baseFlag_blend 0.0
+$frametmp 0.0
+$frame 0.0
+$judge_nonzero 0.5
+$detail_cap -0.25
+$detailFlag 0.0
+$pre_detailFlag 0.0
+$detailFlag_blend 0.0
+$detailframetmp 0.0
+$detailframe 0.0
+
+Proxies
+{
+	EntityRandom
+	{
+		scale	"$ER_scale"
+		resultVar	"$ER_output"
+	}
+	Multiply
+	{
+		srcVar1	"$ER_output"
+		srcVar2	"$onewayFlag1"
+		resultVar	"$seed"
+	}
+	Add
+	{
+		srcVar1	"$seed"
+		srcVar2	"$current"
+		resultVar	"$current"
+	}
+	Equals
+	{
+		srcVar1	"$zero"
+		resultVar	"$onewayFlag1"
+	}
+	Multiply
+	{
+		srcVar1	"$current"
+		srcVar2	"$LCG_a"
+		resultVar	"$current"
+	}
+	Add
+	{
+		srcVar1	"$current"
+		srcVar2	"$LCG_c"
+		resultVar	"$current"
+	}
+	Divide
+	{
+		srcVar1	"$current"
+		srcVar2	"$LCG_m"
+		resultVar	"$mod_temp1"
+	}
+	Int
+	{
+		srcVar1	"$mod_temp1"
+		resultVar	"$mod_temp1"
+	}
+	Multiply
+	{
+		srcVar1	"$mod_temp1"
+		srcVar2	"$LCG_m"
+		resultVar	"$mod_temp1"
+	}
+	Subtract
+	{
+		srcVar1	"$current"
+		srcVar2	"$mod_temp1"
+		resultVar	"$current"
+	}
+	Divide
+	{
+		srcVar1	"$current"
+		srcVar2	"$LCG_m"
+		resultVar	"$unit"
+	}
+	Multiply
+	{
+		srcVar1	"$unit"
+		srcVar2	"$frameLen"
+		resultVar	"$rand"
+	}
+	Sine
+	{
+		sineperiod	"$sine_period"
+		sinemin	"$sine_min"
+		sinemax	"$sine_max"
+		timeoffset	"$sine_offset"
+		resultVar	"$sine"
+	}
+	Clamp
+	{
+		min	"$zero"
+		max	"$one"
+		srcVar1	"$sine"
+		resultVar	"$detailblendfactor"
+	}
+	LessOrEqual
+	{
+		lessEqualVar	"$zero"
+		greaterVar	"$one"
+		srcVar1	"$sine"
+		srcVar2	"$base_cap"
+		resultVar	"$baseFlag"
+	}
+	Subtract
+	{
+		srcVar1	"$baseFlag"
+		srcVar2	"$pre_baseFlag"
+		resultVar	"$baseFlag_blend"
+	}
+	Equals
+	{
+		srcVar1	"$baseFlag"
+		resultVar	"$pre_baseFlag"
+	}
+	Clamp
+	{
+		min	"$zero"
+		max	"$one"
+		srcVar1	"$baseFlag_blend"
+		resultVar	"$baseFlag_blend"
+	}
+	Multiply
+	{
+		srcVar1	"$baseFlag_blend"
+		srcVar2	"$rand"
+		resultVar	"$frametmp"
+	}
+	LessOrEqual
+	{
+		lessEqualVar	"$frame"
+		greaterVar	"$frametmp"
+		srcVar1	"$frametmp"
+		srcVar2	"$judge_nonzero"
+		resultVar	"$frame"
+	}
+	LessOrEqual
+	{
+		lessEqualVar	"$one"
+		greaterVar	"$zero"
+		srcVar1	"$sine"
+		srcVar2	"$detail_cap"
+		resultVar	"$detailFlag"
+	}
+	Subtract
+	{
+		srcVar1	"$detailFlag"
+		srcVar2	"$pre_detailFlag"
+		resultVar	"$detailFlag_blend"
+	}
+	Equals
+	{
+		srcVar1	"$detailFlag"
+		resultVar	"$pre_detailFlag"
+	}
+	Clamp
+	{
+		min	"$zero"
+		max	"$one"
+		srcVar1	"$detailFlag_blend"
+		resultVar	"$detailFlag_blend"
+	}
+	Multiply
+	{
+		srcVar1	"$detailFlag_blend"
+		srcVar2	"$rand"
+		resultVar	"$detailframetmp"
+	}
+	LessOrEqual
+	{
+		lessEqualVar	"$detailframe"
+		greaterVar	"$detailframetmp"
+		srcVar1	"$detailframetmp"
+		srcVar2	"$judge_nonzero"
+		resultVar	"$detailframe"
+	}
+}
+// Written by Aslier 
