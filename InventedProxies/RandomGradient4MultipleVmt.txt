@@ -1,12 +1,19 @@
-
+$detail "path/same/to/basetexture" // 将引号内字符替换为你的basetexture贴图相同的路径
+$frameLen 10 // 填入你的总共帧数量 1起算！！！如 6渐变，你的basetexture会有6帧，那么这里填6
+// ====detail相关 都可以不动====
 $detailblendmode 2
-$sine_period 10
-$sine_min -1.5
-$sine_max 2.5
-$sine_offset 0
-$ER_scale 2147483647
 $detailscale 1
 $detailblendfactor 0.0
+// ============================
+// ==========sine相关==========
+$sine_period 10 // 你的sine周期，越大渐变间隔越长
+$sine_min -1.5 // 你的sine最小值
+$sine_max 2.5 // 你的sine最大值，最大值-最小值 结果越大渐变越快，建议 最大值 + 最小值 = 1 以保证淡出淡入耗时相等 
+$sine_offset 0 // 你的sine相位，影响微乎其微
+// ============================
+$ER_scale 10000 // 你的随机数种子范围，越大越不易发生重复，但注意不要太大
+
+// 以下内容不要动，除非你知道自己在做什么
 $ER_output 0.0
 $onewayFlag1 1
 $seed 0.0
@@ -17,7 +24,6 @@ $LCG_c 1013904223
 $LCG_m 2147483647
 $mod_temp1 0.0
 $unit 0.0
-$frameLen 10
 $rand 0.0
 $sine 0.0
 $one 1
@@ -202,4 +208,4 @@ Proxies
 		resultVar	"$detailframe"
 	}
 }
-// Written by Aslier 
+// Written by Aslier [https://github.com/Aslier16/py2SourcevmtProxies/blob/e0c8d1fd2ccec09450acb9470e67fa66f4845a27/InventedProxies/RandomGradient4MultipleVmt.txt]
