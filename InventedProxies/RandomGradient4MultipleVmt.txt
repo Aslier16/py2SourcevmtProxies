@@ -208,4 +208,4 @@ Proxies
 		resultVar	"$detailframe"
 	}
 }
-// Written by Aslier [https://github.com/Aslier16/py2SourcevmtProxies/blob/e0c8d1fd2ccec09450acb9470e67fa66f4845a27/InventedProxies/RandomGradient4MultipleVmt.txt]
+// Written by Aslier [https://github.com/Aslier16/py2SourcevmtProxies/blob/main/InventedProxies/RandomGradient4MultipleVmt.txt]
