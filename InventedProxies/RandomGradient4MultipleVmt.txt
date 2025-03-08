@@ -1,85 +1,110 @@
-$detail "path/same/to/basetexture" // 将引号内字符替换为你的basetexture贴图相同的路径
-$frameLen 10 // 填入你的总共帧数量 1起算！！！如 6渐变，你的basetexture会有6帧，那么这里填6
-// ====detail相关 都可以不动====
-$detailblendmode 2
-$detailscale 1
-$detailblendfactor 0.0
-// ============================
+// ===========必填============
+// 本方案要求将所有的渐变贴图都存放于basetexture
+$detail "path/to/your/basetexture" // 将引号内字符替换为你的basetexture贴图相同的路径
+$frameIndexMax 5 // 填入你的最大帧在VtfEdit中显示的数字 如 6渐变，你的basetexture会有6帧，那么这里填5
+// ===========================
+
 // ==========sine相关==========
 $sine_period 10 // 你的sine周期，越大渐变间隔越长
 $sine_min -1.5 // 你的sine最小值
 $sine_max 2.5 // 你的sine最大值，最大值-最小值 结果越大渐变越快，建议 最大值 + 最小值 = 1 以保证淡出淡入耗时相等 
 $sine_offset 0 // 你的sine相位，影响微乎其微
+//// 以下在你不更改sine最值时不用更改
+$base_cap 1.25 // basetexture帧数切换时机阈值，请确保这个值>1且<最大值并让值相差一定量避免浮点误差导致的误判，如 [1.25, 最大值-0.25]范围内
+$detail_cap -0.25 // detail帧数切换时机阈值，与上一个相同，建议确保在[最小值+0.25, -0.25]范围内
 // ============================
-$ER_scale 10000 // 你的随机数种子范围，越大越不易发生重复，但注意不要太大
+
+// ====detail相关 都可以不动====
+$detailblendmode 2
+$detailscale 1
+$detailblendfactor 0.0
+// ============================
+$timescale 2 // 种子将会以游戏时长(秒)*timescale为速率递增
+$ER_scale 100 // 你的随机数种子基础值
+$LCG_a 12 // 以下三个值为LCG线性同余生成器的参数，可以查询合适的参数，更大的合适参数会让随机性更好，但也会消耗更多的性能
+$LCG_c 7
+$LCG_m 31 // 此系列参数周期为30
+
 
 // 以下内容不要动，除非你知道自己在做什么
+$frame_temp 0
+$detailframe_temp 0
+$intseed 0
+$time 0
+$scaledtime 0
+$ER_scale 100
 $ER_output 0.0
-$onewayFlag1 1
 $seed 0.0
-$current 0.0
-$zero 0
-$LCG_a 48271
-$LCG_c 1013904223
-$LCG_m 2147483647
 $mod_temp1 0.0
-$unit 0.0
 $rand 0.0
+$randMOD_temp1 0.0
+$sine_offset 0
 $sine 0.0
+$zero 0
 $one 1
-$base_cap 1.25
-$baseFlag 0.0
-$pre_baseFlag 0.0
-$baseFlag_blend 0.0
+$if_temp1 0.0
+$if_temp2 0.0
+$baseFlag 0
+$min 0.0
+$max 1.0
+$pre_baseFlag 0
+$baseFlag_blend 0
 $frametmp 0.0
+$frame_corr 0
 $frame 0.0
-$judge_nonzero 0.5
-$detail_cap -0.25
-$detailFlag 0.0
-$pre_detailFlag 0.0
-$detailFlag_blend 0.0
+$if_temp3 0.0
+$minusone -1
+$if_temp4 0.0
+$detailFlag 0
+$pre_detailFlag 0
+$detailFlag_blend 0
 $detailframetmp 0.0
-$detailframe 0.0
+$detailframe_corr 0
+$detailframe 0
 
 Proxies
 {
+	CurrentTime
+	{
+		resultVar	"$time"
+	}
+	Multiply
+	{
+		srcVar1	"$time"
+		srcVar2	"$timescale"
+		resultVar	"$scaledtime"
+	}
 	EntityRandom
 	{
 		scale	"$ER_scale"
 		resultVar	"$ER_output"
 	}
-	Multiply
+	Int
 	{
 		srcVar1	"$ER_output"
-		srcVar2	"$onewayFlag1"
+		resultVar	"$ER_output"
+	}
+	Add
+	{
+		srcVar1	"$ER_output"
+		srcVar2	"$time"
+		resultVar	"$seed"
+	}
+	Multiply
+	{
+		srcVar1	"$seed"
+		srcVar2	"$LCG_a"
 		resultVar	"$seed"
 	}
 	Add
 	{
 		srcVar1	"$seed"
-		srcVar2	"$current"
-		resultVar	"$current"
-	}
-	Equals
-	{
-		srcVar1	"$zero"
-		resultVar	"$onewayFlag1"
-	}
-	Multiply
-	{
-		srcVar1	"$current"
-		srcVar2	"$LCG_a"
-		resultVar	"$current"
-	}
-	Add
-	{
-		srcVar1	"$current"
 		srcVar2	"$LCG_c"
-		resultVar	"$current"
+		resultVar	"$seed"
 	}
 	Divide
 	{
-		srcVar1	"$current"
+		srcVar1	"$seed"
 		srcVar2	"$LCG_m"
 		resultVar	"$mod_temp1"
 	}
@@ -96,20 +121,31 @@ Proxies
 	}
 	Subtract
 	{
-		srcVar1	"$current"
+		srcVar1	"$seed"
 		srcVar2	"$mod_temp1"
-		resultVar	"$current"
+		resultVar	"$rand"
 	}
 	Divide
 	{
-		srcVar1	"$current"
-		srcVar2	"$LCG_m"
-		resultVar	"$unit"
+		srcVar1	"$rand"
+		srcVar2	"$frameIndexMax"
+		resultVar	"$randMOD_temp1"
+	}
+	Int
+	{
+		srcVar1	"$randMOD_temp1"
+		resultVar	"$randMOD_temp1"
 	}
 	Multiply
 	{
-		srcVar1	"$unit"
-		srcVar2	"$frameLen"
+		srcVar1	"$randMOD_temp1"
+		srcVar2	"$frameIndexMax"
+		resultVar	"$randMOD_temp1"
+	}
+	Subtract
+	{
+		srcVar1	"$rand"
+		srcVar2	"$randMOD_temp1"
 		resultVar	"$rand"
 	}
 	Sine
@@ -127,12 +163,28 @@ Proxies
 		srcVar1	"$sine"
 		resultVar	"$detailblendfactor"
 	}
-	LessOrEqual
+	Subtract
 	{
-		lessEqualVar	"$zero"
-		greaterVar	"$one"
 		srcVar1	"$sine"
 		srcVar2	"$base_cap"
+		resultVar	"$if_temp1"
+	}
+	Abs
+	{
+		srcVar1	"$if_temp1"
+		resultVar	"$if_temp2"
+	}
+	Divide
+	{
+		srcVar1	"$if_temp1"
+		srcVar2	"$if_temp2"
+		resultVar	"$baseFlag"
+	}
+	Clamp
+	{
+		min	"$min"
+		max	"$max"
+		srcVar1	"$baseFlag"
 		resultVar	"$baseFlag"
 	}
 	Subtract
@@ -159,20 +211,57 @@ Proxies
 		srcVar2	"$rand"
 		resultVar	"$frametmp"
 	}
-	LessOrEqual
+	Multiply
 	{
-		lessEqualVar	"$frame"
-		greaterVar	"$frametmp"
-		srcVar1	"$frametmp"
-		srcVar2	"$judge_nonzero"
+		srcVar1	"$frame_temp"
+		srcVar2	"$baseFlag_blend"
+		resultVar	"$frame_corr"
+	}
+	Subtract
+	{
+		srcVar1	"$frame_temp"
+		srcVar2	"$frame_corr"
+		resultVar	"$frame_temp"
+	}
+	Add
+	{
+		srcVar1	"$frame_temp"
+		srcVar2	"$frametmp"
+		resultVar	"$frame_temp"
+	}
+	Int
+	{
+		srcVar1	"$frame_temp"
 		resultVar	"$frame"
 	}
-	LessOrEqual
+	Subtract
 	{
-		lessEqualVar	"$one"
-		greaterVar	"$zero"
 		srcVar1	"$sine"
 		srcVar2	"$detail_cap"
+		resultVar	"$if_temp3"
+	}
+	Multiply
+	{
+		srcVar1	"$if_temp3"
+		srcVar2	"$minusone"
+		resultVar	"$if_temp3"
+	}
+	Abs
+	{
+		srcVar1	"$if_temp3"
+		resultVar	"$if_temp4"
+	}
+	Divide
+	{
+		srcVar1	"$if_temp3"
+		srcVar2	"$if_temp4"
+		resultVar	"$detailFlag"
+	}
+	Clamp
+	{
+		min	"$min"
+		max	"$max"
+		srcVar1	"$detailFlag"
 		resultVar	"$detailFlag"
 	}
 	Subtract
@@ -199,12 +288,27 @@ Proxies
 		srcVar2	"$rand"
 		resultVar	"$detailframetmp"
 	}
-	LessOrEqual
+	Multiply
 	{
-		lessEqualVar	"$detailframe"
-		greaterVar	"$detailframetmp"
-		srcVar1	"$detailframetmp"
-		srcVar2	"$judge_nonzero"
+		srcVar1	"$detailframe_temp"
+		srcVar2	"$detailFlag_blend"
+		resultVar	"$detailframe_corr"
+	}
+	Subtract
+	{
+		srcVar1	"$detailframe_temp"
+		srcVar2	"$detailframe_corr"
+		resultVar	"$detailframe_temp"
+	}
+	Add
+	{
+		srcVar1	"$detailframe_temp"
+		srcVar2	"$detailframetmp"
+		resultVar	"$detailframe_temp"
+	}
+	Int
+	{
+		srcVar1	"$detailframe_temp"
 		resultVar	"$detailframe"
 	}
 }
