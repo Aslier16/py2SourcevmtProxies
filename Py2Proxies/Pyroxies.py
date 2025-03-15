@@ -41,6 +41,8 @@ class Proxies:
                     return variables
                 else:
                     return variables
+            elif isinstance(variables, int):
+                return variables
         except Exception:
             print("initVariables error")
 
