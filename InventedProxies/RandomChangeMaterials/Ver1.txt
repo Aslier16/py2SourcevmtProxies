@@ -1,0 +1,118 @@
+$Period 4 // 填入变化周期
+$Rampmax 3.99 // 填入总帧数-0.01
+$MaterialIndex 3 // 填入当前材质ID，根据需要的变化顺序填入
+$Rate 0.25 // 填入 1/总帧数
+// 正弦函数相关
+$SineMin -2 // 填入用于淡入淡出的正弦最小值，越大淡入淡出越快，同时该材质淡入完成与下一材质开始淡出的间隔会相对增大
+$SineMax 2 // 保证与为最小值的相反数
+$SineOffset -1 // 填入正弦的相位，需要填入能使正弦值在x=0时为{最大值}的值
+// 如果你不知道怎么计算，建议的AI提示词:  {}内容替换为你的$Period周期数值
+// sinemin + (sinemax-sinemin)/2 * (1 + sin( 2*pi/sineperiod * (time + timeoffset) )) 根据上述公式，给出周期为{$Period}，初始值为最大值的正弦函数所需的相位
+// !!!结果需要取相反数!!!
+
+///////////////////////////////////////////////////////////////////////////////
+// 以下内容不建议修改，除非你知道你在做什么
+$initialVal 0.0
+$Ramp 0.0
+$corrFactorone 0.0
+$corrFactortwo 0.0
+$corr 0.0
+$min 0.0
+$max 1.0
+$corrnum 0.0
+$CurrentIndex 0.0
+$Sine 0.0
+$Signal_Temp1 1.0
+$zero 0
+$one 1
+$Signal 0.0
+$alpha 1.0
+
+Proxies
+{
+	LinearRamp
+	{
+		rate	"$Rate"
+		initialValue	"$initialVal"
+		resultVar	"$Ramp"
+	}
+	Subtract
+	{
+		srcVar1	"$Ramp"
+		srcVar2	"$Rampmax"
+		resultVar	"$corrFactorone"
+	}
+	Abs
+	{
+		srcVar1	"$corrFactorone"
+		resultVar	"$corrFactortwo"
+	}
+	Divide
+	{
+		srcVar1	"$corrFactorone"
+		srcVar2	"$corrFactortwo"
+		resultVar	"$corr"
+	}
+	Clamp
+	{
+		min	"$min"
+		max	"$max"
+		srcVar1	"$corr"
+		resultVar	"$corr"
+	}
+	Multiply
+	{
+		srcVar1	"$corr"
+		srcVar2	"$Rampmax"
+		resultVar	"$corrnum"
+	}
+	Subtract
+	{
+		srcVar1	"$initialVal"
+		srcVar2	"$corrnum"
+		resultVar	"$initialVal"
+	}
+	Int
+	{
+		srcVar1	"$Ramp"
+		resultVar	"$CurrentIndex"
+	}
+	Sine
+	{
+		sineperiod	"$Period"
+		sinemin	"$SineMin"
+		sinemax	"$SineMax"
+		timeoffset	"$SineOffset"
+		resultVar	"$Sine"
+	}
+	Subtract
+	{
+		srcVar1	"$CurrentIndex"
+		srcVar2	"$MaterialIndex"
+		resultVar	"$Signal_Temp1"
+	}
+	Abs
+	{
+		srcVar1	"$Signal_Temp1"
+		resultVar	"$Signal_Temp1"
+	}
+	Clamp
+	{
+		min	"$zero"
+		max	"$one"
+		srcVar1	"$Signal_Temp1"
+		resultVar	"$Signal"
+	}
+	Equals
+	{
+		srcVar1	"$Sine"
+		resultVar	"$alpha"
+	}
+	Clamp
+	{
+		min	"$Signal"
+		max	"$one"
+		srcVar1	"$alpha"
+		resultVar	"$alpha"
+	}
+}
